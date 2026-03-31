@@ -4,8 +4,8 @@
 
 #include "domain.h"
 
-Domain::Domain(const string &titlu, const string &autor, const string &gen, int anul_ap)
-    : titlu(titlu), autor(autor), gen(gen), anul_ap(anul_ap) {
+Domain::Domain(const string &titlu_nou, const string &autor_nou, const string &gen_nou, int anul_ap_nou)
+    : titlu(titlu_nou), autor(autor_nou), gen(gen_nou), anul_ap(anul_ap_nou) {
 }
 
 const string &Domain::get_titlu() const {
@@ -20,22 +20,22 @@ const string &Domain::get_gen() const {
     return gen;
 }
 
-const int Domain::get_anul_ap() const {
+int Domain::get_anul_ap() const {
     return anul_ap;
 }
 
-void Domain::setter_titlu(const string &titlu) {
-    this->titlu = titlu;
+void Domain::setter_titlu(const string &titlu_nou) {
+    titlu = titlu_nou;
 }
 
-void Domain::setter_autor(const string &autor) {
-    this->autor = autor;
+void Domain::setter_autor(const string &autor_nou) {
+    autor = autor_nou;
 }
 
-void Domain::setter_gen(const string &gen) {
-    this->gen = gen;
+void Domain::setter_gen(const string &gen_nou) {
+    gen = gen_nou;
 }
 
-void Domain::setter_anul_ap(int anul_ap) {
-    this->anul_ap = anul_ap;
+void Domain::setter_anul_ap(int anul_ap_nou) {
+    anul_ap = anul_ap_nou;
 }

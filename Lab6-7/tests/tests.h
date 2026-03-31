@@ -5,6 +5,10 @@
 #ifndef LAB6_7_TESTS_H
 #define LAB6_7_TESTS_H
 
+#include "../domain/domain.h"
+#include "../repo/repo.h"
+#include "../serv/service.h"
+
 void test_domain();
 
 void test_repo_adauga_si_cauta();

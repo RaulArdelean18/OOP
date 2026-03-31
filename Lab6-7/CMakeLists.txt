@@ -17,3 +17,6 @@ add_executable(Lab6_7_tests
         repo/repo.cpp
         serv/service.cpp
 )
+
+target_compile_options(Lab6_7 PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)
+target_compile_options(Lab6_7_tests PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)

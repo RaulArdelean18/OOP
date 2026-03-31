@@ -156,6 +156,22 @@ void test_service_sortari() {
     assert(rez_autor[2].get_autor() == "C");
 }
 
+void test_cmp_an_gen() {
+    Domain a{"C1", "A1", "z", 2000};
+    Domain b{"C2", "A2", "a", 2000};
+    Domain c{"C3", "A3", "b", 1990};
+    Domain d{"C4", "A4", "c", 2010};
+    Domain e{"C5", "A5", "z", 2000};
+
+    assert(Service::cmp_an_gen(b, a) == true);
+    assert(Service::cmp_an_gen(a, b) == false);
+
+    assert(Service::cmp_an_gen(c, a) == true);
+    assert(Service::cmp_an_gen(d, a) == false);
+
+    assert(Service::cmp_an_gen(a, e) == false);
+    assert(Service::cmp_an_gen(e, a) == false);
+}
 void test_service_sortare_an_gen() {
     Repo repo;
     Service srv(repo);
@@ -178,19 +194,19 @@ void test_cmp_functions() {
     Domain c("C", "Z", "m", 1990);
     Domain d("D", "T", "b", 2010);
 
-    assert(cmp_titlu(a, b));
-    assert(!cmp_titlu(b, a));
-    assert(!cmp_titlu(a, a));
+    assert(Service::cmp_titlu(a, b));
+    assert(!Service::cmp_titlu(b, a));
+    assert(!Service::cmp_titlu(a, a));
 
-    assert(cmp_autor(a, b));
-    assert(!cmp_autor(b, a));
-    assert(!cmp_autor(a, a));
+    assert(Service::cmp_autor(a, b));
+    assert(!Service::cmp_autor(b, a));
+    assert(!Service::cmp_autor(a, a));
 
-    assert(cmp_an_gen(a, b));
-    assert(!cmp_an_gen(b, a));
-    assert(cmp_an_gen(c, a));
-    assert(!cmp_an_gen(a, c));
-    assert(!cmp_an_gen(a, a));
+    assert(Service::cmp_an_gen(a, b));
+    assert(!Service::cmp_an_gen(b, a));
+    assert(Service::cmp_an_gen(c, a));
+    assert(!Service::cmp_an_gen(a, c));
+    assert(!Service::cmp_an_gen(a, a));
 }
 
 void test_service_elemente_identice() {
@@ -219,6 +235,7 @@ void ruleaza_toate_testele() {
     test_service_elemente_identice();
 
     test_cmp_functions();
+    test_cmp_an_gen();
 
     cout << "Toate testele au trecut cu succes!\n";
 }
