@@ -17,23 +17,11 @@ private:
     int anul_ap;
 
 public:
+    Domain();
     Domain(const string &titlu_nou, const string &autor_nou, const string &gen_nou, int an_ap_nou);
+    Domain(const Domain &other);
+    Domain& operator=(const Domain &other);
 
-    Domain(const Domain &other) : titlu(other.titlu), autor(other.autor), gen(other.gen), anul_ap(other.anul_ap) {
-        std::cout << "Constructorul de copiere apelat pentru cartea: " << other.titlu << '\n';
-    }
-
-    Domain operator=(const Domain &other) {
-        if (this != &other) {
-            titlu = other.titlu;
-            autor = other.autor;
-            gen = other.gen;
-            anul_ap = other.anul_ap;
-        }
-
-        return *this;
-    }
-    ;
     /**
     * Getter titlu
     * @return string, titlul carti

@@ -9,6 +9,9 @@ add_executable(Lab6_7
         repo/repo.cpp
         serv/service.cpp
         ui/ui.cpp
+        utils/vector.h
+        validator/validator.cpp
+        validator/validator.h
 )
 
 add_executable(Lab6_7_tests
@@ -16,6 +19,7 @@ add_executable(Lab6_7_tests
         Domain/domain.cpp
         repo/repo.cpp
         serv/service.cpp
+        validator/validator.cpp
 )
 
 target_compile_options(Lab6_7 PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)

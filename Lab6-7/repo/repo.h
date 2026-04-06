@@ -6,13 +6,13 @@
 #define LAB6_7_REPO_H
 
 #include "../Domain/domain.h"
-#include <vector>
+#include "../utils/vector.h"
 #include <string>
 using namespace std;
 
 class Repo {
 private:
-    vector<Domain> carti;
+    MyVector<Domain> carti;
 
 public:
     /**
@@ -45,7 +45,7 @@ public:
      * Returneaza toate cartile
      * @return vectorul de carti
      */
-    const vector<Domain>& get_all() const;
+    const MyVector<Domain>& get_all() const;
 };
 
 

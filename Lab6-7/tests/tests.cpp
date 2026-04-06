@@ -147,11 +147,11 @@ void test_service_sortari() {
     srv.adauga_carte("Alpha", "C", "roman", 1990);
     srv.adauga_carte("Beta", "A", "roman", 1980);
 
-    vector<Domain> rez_titlu = srv.sortare_titlu();
+    MyVector<Domain> rez_titlu = srv.sortare_titlu();
     assert(rez_titlu[0].get_titlu() == "Alpha");
     assert(rez_titlu[2].get_titlu() == "Zeta");
 
-    vector<Domain> rez_autor = srv.sortare_autor();
+    MyVector<Domain> rez_autor = srv.sortare_autor();
     assert(rez_autor[0].get_autor() == "A");
     assert(rez_autor[2].get_autor() == "C");
 }
@@ -220,8 +220,144 @@ void test_service_elemente_identice() {
     assert(srv.sortare_an_gen()[0].get_gen() == "GenX");
 }
 
+void test_domain_default_constructor() {
+    Domain d;
+    assert(d.get_titlu().empty());
+    assert(d.get_autor().empty());
+    assert(d.get_gen().empty());
+    assert(d.get_anul_ap() == 0);
+}
+
+void test_domain_operator_equal() {
+    Domain a("t1", "a1", "g1", 2000);
+    Domain b("t2", "a2", "g2", 2001);
+
+    b = a;
+    assert(b.get_titlu() == "t1");
+    assert(b.get_autor() == "a1");
+    assert(b.get_gen() == "g1");
+    assert(b.get_anul_ap() == 2000);
+}
+
+void test_domain_copy_constructor() {
+    Domain a("Ion", "Pop", "Drama", 1999);
+    Domain b(a);
+
+    assert(b.get_titlu() == "Ion");
+    assert(b.get_autor() == "Pop");
+    assert(b.get_gen() == "Drama");
+    assert(b.get_anul_ap() == 1999);
+}
+
+void test_validator() {
+    Domain bun("Titlu", "Autor", "Gen", 2000);
+    Validator::valideaza(bun);
+
+    bool aruncat = false;
+    try {
+        Domain c("", "Autor", "Gen", 2000);
+        Validator::valideaza(c);
+    } catch (const runtime_error&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    aruncat = false;
+    try {
+        Domain c("Titlu", "", "Gen", 2000);
+        Validator::valideaza(c);
+    } catch (const runtime_error&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    aruncat = false;
+    try {
+        Domain c("Titlu", "Autor", "", 2000);
+        Validator::valideaza(c);
+    } catch (const runtime_error&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    aruncat = false;
+    try {
+        Domain c("Titlu", "Autor", "Gen", 0);
+        Validator::valideaza(c);
+    } catch (const runtime_error&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+}
+
+void test_myvector_exceptii() {
+    MyVector<int> v;
+    v.push_back(10);
+    v.push_back(20);
+
+    bool aruncat = false;
+
+    // erase cu pozitie negativa
+    aruncat = false;
+    try {
+        v.erase(-1);
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    // erase cu pozitie prea mare
+    aruncat = false;
+    try {
+        v.erase(5);
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    // operator[] neconst cu pozitie negativa
+    aruncat = false;
+    try {
+        v[-1];
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    // operator[] neconst cu pozitie prea mare
+    aruncat = false;
+    try {
+        v[5];
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    // operator[] const cu pozitie negativa
+    const MyVector<int>& cv = v;
+    aruncat = false;
+    try {
+        cv[-1];
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+
+    // operator[] const cu pozitie prea mare
+    aruncat = false;
+    try {
+        cv[5];
+    } catch (const std::out_of_range&) {
+        aruncat = true;
+    }
+    assert(aruncat);
+}
+
 void ruleaza_toate_testele() {
     test_domain();
+    test_domain_default_constructor();
+    test_domain_operator_equal();
+    test_domain_copy_constructor();
 
     test_repo_adauga_si_cauta();
     test_repo_exceptii();
@@ -236,6 +372,9 @@ void ruleaza_toate_testele() {
 
     test_cmp_functions();
     test_cmp_an_gen();
+
+    test_validator();
+    test_myvector_exceptii();
 
     cout << "Toate testele au trecut cu succes!\n";
 }

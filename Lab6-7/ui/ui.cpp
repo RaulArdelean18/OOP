@@ -5,7 +5,6 @@
 #include "ui.h"
 #include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -27,6 +26,7 @@ void UI::print_meniu() const {
     cout << "0. Iesire\n";
     cout << "Alegeti optiunea: ";
 }
+
 
 void UI::ui_adauga() {
     string titlu, autor, gen;
@@ -116,7 +116,7 @@ void UI::ui_cauta() const {
 }
 
 void UI::ui_afiseaza() const {
-    const vector<Domain>& carti = srv.get_all();
+    const MyVector<Domain>& carti = srv.get_all();
 
     if (carti.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -138,7 +138,7 @@ void UI::ui_filtrare_titlu() const {
     cin >> ws;
     getline(cin, titlu);
 
-    vector<Domain> rezultat = srv.filtrare_titlu(titlu);
+    MyVector<Domain> rezultat = srv.filtrare_titlu(titlu);
 
     if (rezultat.empty()) {
         cout << "Nu exista carti care sa respecte filtrul dat.\n";
@@ -160,7 +160,7 @@ void UI::ui_filtrare_an() const {
     cin >> ws;
     cin>>an;
 
-    vector<Domain> rezultat = srv.filtrare_an(an);
+    MyVector<Domain> rezultat = srv.filtrare_an(an);
 
     if (rezultat.empty()) {
         cout << "Nu exista carti care sa respecte filtrul dat.\n";
@@ -177,7 +177,7 @@ void UI::ui_filtrare_an() const {
 }
 
 void UI::ui_sortare_titlu() const {
-    vector<Domain> rezultat = srv.sortare_titlu();
+    MyVector<Domain> rezultat = srv.sortare_titlu();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -194,7 +194,7 @@ void UI::ui_sortare_titlu() const {
 }
 
 void UI::ui_sortare_autor() const {
-    vector<Domain> rezultat = srv.sortare_autor();
+    MyVector<Domain> rezultat = srv.sortare_autor();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -211,7 +211,7 @@ void UI::ui_sortare_autor() const {
 }
 
 void UI::ui_sortare_an_gen() const {
-    vector<Domain> rezultat = srv.sortare_an_gen();
+    MyVector<Domain> rezultat = srv.sortare_an_gen();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";

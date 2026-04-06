@@ -6,6 +6,7 @@
 #define LAB6_7_UI_H
 
 #include "../serv/service.h"
+#include "../utils/vector.h"
 
 class UI {
 private:

@@ -6,7 +6,7 @@
 #define LAB6_7_SERVICE_H
 
 #include "../repo/repo.h"
-#include <vector>
+#include "../utils/vector.h"
 #include <string>
 using namespace std;
 
@@ -78,39 +78,39 @@ public:
      * Get all
      * @return vector de carti cu toate cartile
      */
-    const vector<Domain> &get_all() const;
+    const MyVector<Domain> &get_all() const;
 
     /**
      * Filtrare dupa titlu
      * @param titlu : string, titlul dupa care vrem sa filtrem
      * @return vector de obiecte de carti
      */
-    vector<Domain> filtrare_titlu(const string &titlu) const;
+    MyVector<Domain> filtrare_titlu(const string &titlu) const;
 
     /**
      * Filtrare dupa an
      * @param anul_ap : int, anul aparitiei dupa care vrem sa filtrem
      * @return vector de obiecte de carti
      */
-    vector<Domain> filtrare_an(const int &anul_ap) const;
+    MyVector<Domain> filtrare_an(const int &anul_ap) const;
 
     /**
      * Sortare titlu
      * @return vector de obiecte de carti
      */
-    vector<Domain> sortare_titlu() const;
+    MyVector<Domain> sortare_titlu() const;
 
     /**
      * Sortare dupa autor
      * @return vector de obiecte de carti
      */
-    vector<Domain> sortare_autor() const;
+    MyVector<Domain> sortare_autor() const;
 
     /**
      * Sortare an aparitie, dupa cu genul
      * @return vector de obiecte de carti
      */
-    vector<Domain> sortare_an_gen() const;
+    MyVector<Domain> sortare_an_gen() const;
 };
 
 #endif //LAB6_7_SERVICE_H

@@ -15,9 +15,9 @@ void Repo::adauga(const Domain& c) {
 }
 
 void Repo::sterge(const string& titlu) {
-    for (auto it = carti.begin(); it != carti.end(); it++) {
-        if (it->get_titlu() == titlu) {
-            carti.erase(it);
+    for (int i = 0; i < carti.size(); i++) {
+        if (carti[i].get_titlu() == titlu) {
+            carti.erase(i);
             return;
         }
     }
@@ -43,6 +43,6 @@ const Domain& Repo::cauta(const string& titlu) const {
     throw runtime_error("Nu exista carte cu titlul dat!");
 }
 
-const vector<Domain>& Repo::get_all() const {
+const MyVector<Domain>& Repo::get_all() const {
     return carti;
 }
