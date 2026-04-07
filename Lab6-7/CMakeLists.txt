@@ -22,5 +22,9 @@ add_executable(Lab6_7_tests
         validator/validator.cpp
 )
 
+add_executable(TestVector
+        VectorDinamicCPP/VectorDinamicCPP/main.cpp
+)
+
 target_compile_options(Lab6_7 PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)
 target_compile_options(Lab6_7_tests PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Werror)

@@ -62,6 +62,10 @@ public:
         elems[lg++] = elem;
     }
 
+    void add(const T& elem) {
+        push_back(elem);
+    }
+
     void erase(int poz) {
         if (poz < 0 || poz >= lg) {
             throw std::out_of_range("Pozitie invalida!");
@@ -85,6 +89,10 @@ public:
         if (poz < 0 || poz >= lg) {
             throw std::out_of_range("Pozitie invalida!");
         }
+        return elems[poz];
+    }
+
+    const T& get(int poz) {
         return elems[poz];
     }
 
