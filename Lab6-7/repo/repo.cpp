@@ -2,47 +2,49 @@
 // Created by Raul_A on 30/03/2026.
 //
 
-#include "../repo/repo.h"
-#include <stdexcept>
+#include "repo.h"
+#include <algorithm>
 
 void Repo::adauga(const Domain& c) {
-    for (const auto& carte : carti) {
-        if (carte.get_titlu() == c.get_titlu()) {
-            throw runtime_error("Exista deja o carte cu acest titlu!");
-        }
+    auto it = std::find_if(carti.begin(), carti.end(), [&](const Domain& d) {
+        return d.get_titlu() == c.get_titlu();
+    });
+    if (it != carti.end()) {
+        throw DuplicatException("Exista deja o carte cu acest titlu!");
     }
     carti.push_back(c);
 }
 
-void Repo::sterge(const string& titlu) {
-    for (int i = 0; i < carti.size(); i++) {
-        if (carti[i].get_titlu() == titlu) {
-            carti.erase(i);
-            return;
-        }
+void Repo::sterge(const std::string& titlu) {
+    auto it = std::find_if(carti.begin(), carti.end(), [&](const Domain& d) {
+        return d.get_titlu() == titlu;
+    });
+    if (it == carti.end()) {
+        throw NotFoundException("Nu exista carte cu titlul dat!");
     }
-    throw runtime_error("Nu exista carte cu titlul dat!");
+    carti.erase(it);
 }
 
-void Repo::modifica(const string& titlu, const Domain& carte_noua) {
-    for (auto& carte : carti) {
-        if (carte.get_titlu() == titlu) {
-            carte = carte_noua;
-            return;
-        }
+void Repo::modifica(const std::string& titlu, const Domain& carte_noua) {
+    auto it = std::find_if(carti.begin(), carti.end(), [&](const Domain& d) {
+        return d.get_titlu() == titlu;
+    });
+    if (it == carti.end()) {
+        throw NotFoundException("Nu exista carte cu titlul dat!");
     }
-    throw runtime_error("Nu exista carte cu titlul dat!");
+    *it = carte_noua;
 }
 
-const Domain& Repo::cauta(const string& titlu) const {
-    for (const auto& carte : carti) {
-        if (carte.get_titlu() == titlu) {
-            return carte;
-        }
+const Domain& Repo::cauta(const std::string& titlu) const {
+    auto it = std::find_if(carti.begin(), carti.end(), [&](const Domain& d) {
+        return d.get_titlu() == titlu;
+    });
+    if (it == carti.end()) {
+        throw NotFoundException("Nu exista carte cu titlul dat!");
     }
-    throw runtime_error("Nu exista carte cu titlul dat!");
+    return *it;
 }
 
-const MyVector<Domain>& Repo::get_all() const {
+const std::vector<Domain>& Repo::get_all() const {
     return carti;
 }

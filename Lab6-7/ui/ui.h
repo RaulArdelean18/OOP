@@ -25,6 +25,15 @@ private:
     void ui_sortare_autor() const;
     void ui_sortare_an_gen() const;
 
+    void ui_goleste_cos();
+    void ui_adauga_in_cos();
+    void ui_genereaza_cos();
+    void ui_exporta_cos() const;
+    void ui_afiseaza_cos() const;
+
+    static void afiseaza_carte(const Domain& c);
+    static void afiseaza_lista(const std::vector<Domain>& lista);
+
 public:
     UI(Service& srv);
 

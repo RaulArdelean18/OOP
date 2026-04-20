@@ -6,6 +6,7 @@
 #define LAB6_7_VALIDATOR_H
 
 #include "../domain/domain.h"
+#include "../exceptions/exceptions.h"
 
 class Validator {
 public:

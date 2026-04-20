@@ -8,11 +8,13 @@
 #include "../repo/repo.h"
 #include "../utils/vector.h"
 #include <string>
+#include <vector>
 using namespace std;
 
 class Service {
 private:
     Repo &repo;
+    std::vector<Domain> cos;
 
 public:
     Service(Repo &repo_ref);
@@ -48,7 +50,8 @@ public:
      * @param gen string, genul carti
      * @param anul_ap int, anul aparitie
      */
-    void adauga_carte(const string &titlu, const string &autor, const string &gen, const int &anul_ap) const;
+    void adauga_carte(const std::string &titlu, const std::string &autor,
+                      const std::string &gen, int anul_ap) const;
 
     /**
      * Stergem cartea cu titlul @titlu
@@ -64,8 +67,8 @@ public:
      * @param gen_nou : string, noul gen
      * @param anul_ap_nou : int, anul de aparitie nou
      */
-    void modifica_carte(const string &titlu_vechi, const string &titlu_nou, const string &autor_nou,
-                        const string &gen_nou, const int &anul_ap_nou) const;
+    void modifica_carte(const std::string &titlu_vechi, const std::string &titlu_nou,
+                        const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) const;
 
     /**
      * Cautam cartea
@@ -78,39 +81,46 @@ public:
      * Get all
      * @return vector de carti cu toate cartile
      */
-    const MyVector<Domain> &get_all() const;
+    const std::vector<Domain> &get_all() const;
 
     /**
      * Filtrare dupa titlu
      * @param titlu : string, titlul dupa care vrem sa filtrem
      * @return vector de obiecte de carti
      */
-    MyVector<Domain> filtrare_titlu(const string &titlu) const;
+    std::vector<Domain> filtrare_titlu(const string &titlu) const;
 
     /**
      * Filtrare dupa an
      * @param anul_ap : int, anul aparitiei dupa care vrem sa filtrem
      * @return vector de obiecte de carti
      */
-    MyVector<Domain> filtrare_an(const int &anul_ap) const;
+    std::vector<Domain> filtrare_an(int anul_ap) const;
 
     /**
      * Sortare titlu
      * @return vector de obiecte de carti
      */
-    MyVector<Domain> sortare_titlu() const;
+    std::vector<Domain> sortare_titlu() const;
 
     /**
      * Sortare dupa autor
      * @return vector de obiecte de carti
      */
-    MyVector<Domain> sortare_autor() const;
+
+    std::vector<Domain> sortare_autor() const;
 
     /**
      * Sortare an aparitie, dupa cu genul
      * @return vector de obiecte de carti
      */
-    MyVector<Domain> sortare_an_gen() const;
+    std::vector<Domain> sortare_an_gen() const;
+
+    void goleste_cos();
+    void adauga_in_cos(const std::string &titlu);
+    void genereaza_cos(int nr);
+    const std::vector<Domain>& get_cos() const;
+    void exporta_cos(const std::string &nume_fisier, const std::string &format) const;
 };
 
 #endif //LAB6_7_SERVICE_H

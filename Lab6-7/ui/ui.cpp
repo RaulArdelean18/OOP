@@ -8,25 +8,29 @@
 
 using namespace std;
 
-UI::UI(Service& srv) : srv(srv) {
-}
+UI::UI(Service& srv_ref) : srv(srv_ref) {}
 
 void UI::print_meniu() const {
-    cout << "\n===== MENIU BIBLIOTECA =====\n";
-    cout << "1. Adauga carte\n";
-    cout << "2. Sterge carte\n";
-    cout << "3. Modifica carte\n";
-    cout << "4. Cauta carte\n";
-    cout << "5. Afiseaza toate cartile\n";
-    cout << "6. Filtrare dupa titlu\n";
-    cout << "7. Filtrare dupa anul aparitiei\n";
-    cout << "8. Sortare dupa titlu\n";
-    cout << "9. Sortare dupa autor\n";
-    cout << "10. Sortare dupa an + gen\n";
-    cout << "0. Iesire\n";
-    cout << "Alegeti optiunea: ";
+    std::cout << "\n===== MENIU BIBLIOTECA =====\n";
+    std::cout << "1. Adauga carte\n";
+    std::cout << "2. Sterge carte\n";
+    std::cout << "3. Modifica carte\n";
+    std::cout << "4. Cauta carte\n";
+    std::cout << "5. Afiseaza toate cartile\n";
+    std::cout << "6. Filtrare dupa titlu\n";
+    std::cout << "7. Filtrare dupa anul aparitiei\n";
+    std::cout << "8. Sortare dupa titlu\n";
+    std::cout << "9. Sortare dupa autor\n";
+    std::cout << "10. Sortare dupa an + gen\n";
+    std::cout << "--- Cos de Inchirieri ---\n";
+    std::cout << "11. Goleste cos\n";
+    std::cout << "12. Adauga in cos (dupa titlu)\n";
+    std::cout << "13. Genereaza cos aleator\n";
+    std::cout << "14. Exporta cos (CSV/HTML)\n";
+    std::cout << "15. Afiseaza cos\n";
+    std::cout << "0. Iesire\n";
+    std::cout << "Alegeti optiunea: ";
 }
-
 
 void UI::ui_adauga() {
     string titlu, autor, gen;
@@ -116,7 +120,7 @@ void UI::ui_cauta() const {
 }
 
 void UI::ui_afiseaza() const {
-    const MyVector<Domain>& carti = srv.get_all();
+    const std::vector<Domain> & carti = srv.get_all();
 
     if (carti.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -138,7 +142,7 @@ void UI::ui_filtrare_titlu() const {
     cin >> ws;
     getline(cin, titlu);
 
-    MyVector<Domain> rezultat = srv.filtrare_titlu(titlu);
+    std::vector<Domain> rezultat = srv.filtrare_titlu(titlu);
 
     if (rezultat.empty()) {
         cout << "Nu exista carti care sa respecte filtrul dat.\n";
@@ -160,7 +164,7 @@ void UI::ui_filtrare_an() const {
     cin >> ws;
     cin>>an;
 
-    MyVector<Domain> rezultat = srv.filtrare_an(an);
+    std::vector<Domain> rezultat = srv.filtrare_an(an);
 
     if (rezultat.empty()) {
         cout << "Nu exista carti care sa respecte filtrul dat.\n";
@@ -177,7 +181,7 @@ void UI::ui_filtrare_an() const {
 }
 
 void UI::ui_sortare_titlu() const {
-    MyVector<Domain> rezultat = srv.sortare_titlu();
+    std::vector<Domain> rezultat = srv.sortare_titlu();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -194,7 +198,7 @@ void UI::ui_sortare_titlu() const {
 }
 
 void UI::ui_sortare_autor() const {
-    MyVector<Domain> rezultat = srv.sortare_autor();
+    std::vector<Domain> rezultat = srv.sortare_autor();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -211,7 +215,7 @@ void UI::ui_sortare_autor() const {
 }
 
 void UI::ui_sortare_an_gen() const {
-    MyVector<Domain> rezultat = srv.sortare_an_gen();
+    std::vector<Domain> rezultat = srv.sortare_an_gen();
 
     if (rezultat.empty()) {
         cout << "Nu exista carti in lista.\n";
@@ -225,6 +229,80 @@ void UI::ui_sortare_an_gen() const {
         cout << "Gen: " << c.get_gen() << '\n';
         cout << "Anul aparitiei: " << c.get_anul_ap() << '\n';
     }
+}
+
+void UI::ui_goleste_cos() {
+    srv.goleste_cos();
+    std::cout << "Cosul a fost golit.\n";
+    std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
+}
+
+void UI::ui_adauga_in_cos() {
+    std::string titlu;
+    std::cout << "Titlul cartii de adaugat in cos: ";
+    std::cin >> std::ws;
+    std::getline(std::cin, titlu);
+    try {
+        srv.adauga_in_cos(titlu);
+        std::cout << "Carte adaugata in cos!\n";
+    } catch (const std::exception& e) {
+        std::cout << e.what() << '\n';
+    }
+    std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
+}
+
+void UI::ui_genereaza_cos() {
+    int nr;
+    std::cout << "Numarul de carti pentru generare: ";
+    std::cin >> nr;
+    try {
+        srv.genereaza_cos(nr);
+        std::cout << "Cos generat aleator!\n";
+    } catch (const std::exception& e) {
+        std::cout << e.what() << '\n';
+    }
+    std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
+}
+
+void UI::ui_exporta_cos() const {
+    std::string format, nume_fisier;
+    std::cout << "Format export (CSV/HTML): ";
+    std::cin >> std::ws;
+    std::getline(std::cin, format);
+    std::cout << "Numele fisierului (fara extensie): ";
+    std::getline(std::cin, nume_fisier);
+    try {
+        srv.exporta_cos(nume_fisier, format);
+        std::cout << "Cosul a fost exportat in " << nume_fisier << "."
+                  << (format == "CSV" ? "csv" : "html") << "\n";
+    } catch (const std::exception& e) {
+        std::cout << e.what() << '\n';
+    }
+    std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
+}
+
+void UI::afiseaza_carte(const Domain& c) {
+    std::cout << "-----------------------------\n";
+    std::cout << "Titlu: " << c.get_titlu() << '\n';
+    std::cout << "Autor: " << c.get_autor() << '\n';
+    std::cout << "Gen: " << c.get_gen() << '\n';
+    std::cout << "Anul aparitiei: " << c.get_anul_ap() << '\n';
+}
+
+void UI::afiseaza_lista(const std::vector<Domain>& lista) {
+    for (const auto& c : lista)
+        afiseaza_carte(c);
+}
+
+void UI::ui_afiseaza_cos() const {
+    const auto& cos = srv.get_cos();
+    if (cos.empty()) {
+        std::cout << "Cosul este gol.\n";
+    } else {
+        std::cout << "=== Cos de Inchirieri ===\n";
+        afiseaza_lista(cos);
+    }
+    std::cout << "Total carti in cos: " << cos.size() << "\n";
 }
 
 void UI::run() {
@@ -262,9 +340,12 @@ void UI::run() {
             case 9:
                 ui_sortare_autor();
                 break;
-            case 10:
-                ui_sortare_an_gen();
-                break;
+            case 10: ui_sortare_an_gen(); break;
+            case 11: ui_goleste_cos(); break;
+            case 12: ui_adauga_in_cos(); break;
+            case 13: ui_genereaza_cos(); break;
+            case 14: ui_exporta_cos(); break;
+            case 15: ui_afiseaza_cos(); break;
             case 0:
                 cout << "Aplicatia se inchide.\n";
                 return;
