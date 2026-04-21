@@ -29,6 +29,7 @@ void test_cos_genereaza_biblioteca_goala();
 void test_cos_exporta_csv();
 void test_cos_exporta_html();
 void test_cos_exporta_format_invalid();
+void test_gen_frequences();
 
 void ruleaza_toate_testele();
 

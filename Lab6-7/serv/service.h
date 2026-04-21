@@ -9,6 +9,7 @@
 #include "../utils/vector.h"
 #include <string>
 #include <vector>
+#include <map>
 using namespace std;
 
 class Service {
@@ -121,6 +122,12 @@ public:
     void genereaza_cos(int nr);
     const std::vector<Domain>& get_cos() const;
     void exporta_cos(const std::string &nume_fisier, const std::string &format) const;
+
+    /**
+     *  Aflu frecventa genurilor cartilor din Domain
+     *  @return map de string uri unde am frecventa genurilor de tip int
+     */
+    std::map<std::string, int> gen_frequences();
 };
 
 #endif //LAB6_7_SERVICE_H

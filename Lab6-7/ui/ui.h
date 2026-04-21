@@ -30,7 +30,9 @@ private:
     void ui_genereaza_cos();
     void ui_exporta_cos() const;
     void ui_afiseaza_cos() const;
+    void ui_afiseaza_freq_gen() const;
 
+    static void afiseaza_map(const std::map<std::string,int>& freq);
     static void afiseaza_carte(const Domain& c);
     static void afiseaza_lista(const std::vector<Domain>& lista);
 

@@ -8,7 +8,8 @@
 
 using namespace std;
 
-UI::UI(Service& srv_ref) : srv(srv_ref) {}
+UI::UI(Service &srv_ref) : srv(srv_ref) {
+}
 
 void UI::print_meniu() const {
     std::cout << "\n===== MENIU BIBLIOTECA =====\n";
@@ -22,12 +23,12 @@ void UI::print_meniu() const {
     std::cout << "8. Sortare dupa titlu\n";
     std::cout << "9. Sortare dupa autor\n";
     std::cout << "10. Sortare dupa an + gen\n";
-    std::cout << "--- Cos de Inchirieri ---\n";
     std::cout << "11. Goleste cos\n";
     std::cout << "12. Adauga in cos (dupa titlu)\n";
     std::cout << "13. Genereaza cos aleator\n";
     std::cout << "14. Exporta cos (CSV/HTML)\n";
     std::cout << "15. Afiseaza cos\n";
+    std::cout << "16. Afiseaza frecventa genurilor\n";
     std::cout << "0. Iesire\n";
     std::cout << "Alegeti optiunea: ";
 }
@@ -47,12 +48,12 @@ void UI::ui_adauga() {
     getline(cin, gen);
 
     cout << "Anul aparitiei: ";
-    cin>>anul_ap;
+    cin >> anul_ap;
 
     try {
         srv.adauga_carte(titlu, autor, gen, anul_ap);
         cout << "Carte adaugata cu succes!\n";
-    } catch (const exception& e) {
+    } catch (const exception &e) {
         cout << e.what() << '\n';
     }
 }
@@ -67,7 +68,7 @@ void UI::ui_sterge() {
     try {
         srv.sterge_carte(titlu);
         cout << "Carte stearsa cu succes!\n";
-    } catch (const exception& e) {
+    } catch (const exception &e) {
         cout << e.what() << '\n';
     }
 }
@@ -90,12 +91,12 @@ void UI::ui_modifica() {
     getline(cin, gen_nou);
 
     cout << "Anul aparitiei nou: ";
-    cin>>anul_ap_nou;
+    cin >> anul_ap_nou;
 
     try {
         srv.modifica_carte(titlu_vechi, titlu_nou, autor_nou, gen_nou, anul_ap_nou);
         cout << "Carte modificata cu succes!\n";
-    } catch (const exception& e) {
+    } catch (const exception &e) {
         cout << e.what() << '\n';
     }
 }
@@ -108,26 +109,26 @@ void UI::ui_cauta() const {
     getline(cin, titlu);
 
     try {
-        const Domain& c = srv.cauta_carte(titlu);
+        const Domain &c = srv.cauta_carte(titlu);
         cout << "Carte gasita:\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
         cout << "Gen: " << c.get_gen() << '\n';
         cout << "Anul aparitiei: " << c.get_anul_ap() << '\n';
-    } catch (const exception& e) {
+    } catch (const exception &e) {
         cout << e.what() << '\n';
     }
 }
 
 void UI::ui_afiseaza() const {
-    const std::vector<Domain> & carti = srv.get_all();
+    const std::vector<Domain> &carti = srv.get_all();
 
     if (carti.empty()) {
         cout << "Nu exista carti in lista.\n";
         return;
     }
 
-    for (const auto& c : carti) {
+    for (const auto &c: carti) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -149,7 +150,7 @@ void UI::ui_filtrare_titlu() const {
         return;
     }
 
-    for (const auto& c : rezultat) {
+    for (const auto &c: rezultat) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -162,7 +163,7 @@ void UI::ui_filtrare_an() const {
     int an;
     cout << "Anul pentru filtrare: ";
     cin >> ws;
-    cin>>an;
+    cin >> an;
 
     std::vector<Domain> rezultat = srv.filtrare_an(an);
 
@@ -171,7 +172,7 @@ void UI::ui_filtrare_an() const {
         return;
     }
 
-    for (const auto& c : rezultat) {
+    for (const auto &c: rezultat) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -188,7 +189,7 @@ void UI::ui_sortare_titlu() const {
         return;
     }
 
-    for (const auto& c : rezultat) {
+    for (const auto &c: rezultat) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -205,7 +206,7 @@ void UI::ui_sortare_autor() const {
         return;
     }
 
-    for (const auto& c : rezultat) {
+    for (const auto &c: rezultat) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -222,7 +223,7 @@ void UI::ui_sortare_an_gen() const {
         return;
     }
 
-    for (const auto& c : rezultat) {
+    for (const auto &c: rezultat) {
         cout << "-----------------------------\n";
         cout << "Titlu: " << c.get_titlu() << '\n';
         cout << "Autor: " << c.get_autor() << '\n';
@@ -245,7 +246,7 @@ void UI::ui_adauga_in_cos() {
     try {
         srv.adauga_in_cos(titlu);
         std::cout << "Carte adaugata in cos!\n";
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cout << e.what() << '\n';
     }
     std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
@@ -258,7 +259,7 @@ void UI::ui_genereaza_cos() {
     try {
         srv.genereaza_cos(nr);
         std::cout << "Cos generat aleator!\n";
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cout << e.what() << '\n';
     }
     std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
@@ -274,14 +275,14 @@ void UI::ui_exporta_cos() const {
     try {
         srv.exporta_cos(nume_fisier, format);
         std::cout << "Cosul a fost exportat in " << nume_fisier << "."
-                  << (format == "CSV" ? "csv" : "html") << "\n";
-    } catch (const std::exception& e) {
+                << (format == "CSV" ? "csv" : "html") << "\n";
+    } catch (const std::exception &e) {
         std::cout << e.what() << '\n';
     }
     std::cout << "Total carti in cos: " << srv.get_cos().size() << "\n";
 }
 
-void UI::afiseaza_carte(const Domain& c) {
+void UI::afiseaza_carte(const Domain &c) {
     std::cout << "-----------------------------\n";
     std::cout << "Titlu: " << c.get_titlu() << '\n';
     std::cout << "Autor: " << c.get_autor() << '\n';
@@ -289,13 +290,13 @@ void UI::afiseaza_carte(const Domain& c) {
     std::cout << "Anul aparitiei: " << c.get_anul_ap() << '\n';
 }
 
-void UI::afiseaza_lista(const std::vector<Domain>& lista) {
-    for (const auto& c : lista)
+void UI::afiseaza_lista(const std::vector<Domain> &lista) {
+    for (const auto &c: lista)
         afiseaza_carte(c);
 }
 
 void UI::ui_afiseaza_cos() const {
-    const auto& cos = srv.get_cos();
+    const auto &cos = srv.get_cos();
     if (cos.empty()) {
         std::cout << "Cosul este gol.\n";
     } else {
@@ -303,6 +304,22 @@ void UI::ui_afiseaza_cos() const {
         afiseaza_lista(cos);
     }
     std::cout << "Total carti in cos: " << cos.size() << "\n";
+}
+
+void UI::afiseaza_map(const std::map<std::string, int> &freq) {
+    for (auto x: freq) {
+        std::cout << "Genul: " << x.first << " iar frecventa lui: " << x.second << '\n';
+    }
+}
+
+void UI::ui_afiseaza_freq_gen() const {
+    const auto &freq = srv.gen_frequences();
+    if (freq.empty()) {
+        std::cout << "Nu avem carti in Domain\n";
+    } else {
+        std::cout << "=== Genurile cu frecventele ===\n";
+        afiseaza_map(freq);
+    }
 }
 
 void UI::run() {
@@ -340,12 +357,20 @@ void UI::run() {
             case 9:
                 ui_sortare_autor();
                 break;
-            case 10: ui_sortare_an_gen(); break;
-            case 11: ui_goleste_cos(); break;
-            case 12: ui_adauga_in_cos(); break;
-            case 13: ui_genereaza_cos(); break;
-            case 14: ui_exporta_cos(); break;
-            case 15: ui_afiseaza_cos(); break;
+            case 10: ui_sortare_an_gen();
+                break;
+            case 11: ui_goleste_cos();
+                break;
+            case 12: ui_adauga_in_cos();
+                break;
+            case 13: ui_genereaza_cos();
+                break;
+            case 14: ui_exporta_cos();
+                break;
+            case 15: ui_afiseaza_cos();
+                break;
+            case 16: ui_afiseaza_freq_gen();
+                break;
             case 0:
                 cout << "Aplicatia se inchide.\n";
                 return;

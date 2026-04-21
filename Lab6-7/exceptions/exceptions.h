@@ -10,22 +10,26 @@
 
 class DuplicatException : public std::runtime_error {
 public:
-    explicit DuplicatException(const std::string& msg) : std::runtime_error(msg) {}
+    explicit DuplicatException(const std::string &msg) : std::runtime_error(msg) {
+    }
 };
 
 class NotFoundException : public std::runtime_error {
 public:
-    explicit NotFoundException(const std::string& msg) : std::runtime_error(msg) {}
+    explicit NotFoundException(const std::string &msg) : std::runtime_error(msg) {
+    }
 };
 
 class ValidationException : public std::runtime_error {
 public:
-    explicit ValidationException(const std::string& msg) : std::runtime_error(msg) {}
+    explicit ValidationException(const std::string &msg) : std::runtime_error(msg) {
+    }
 };
 
 class CosException : public std::runtime_error {
 public:
-    explicit CosException(const std::string& msg) : std::runtime_error(msg) {}
+    explicit CosException(const std::string &msg) : std::runtime_error(msg) {
+    }
 };
 
 #endif //LAB6_7_EXCEPTIONS_H

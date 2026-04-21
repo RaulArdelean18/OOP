@@ -5,10 +5,11 @@
 #include <chrono>
 #include <fstream>
 
-Service::Service(Repo &repo_ref) : repo(repo_ref) {}
+Service::Service(Repo &repo_ref) : repo(repo_ref) {
+}
 
 void Service::adauga_carte(const std::string &titlu, const std::string &autor,
-                            const std::string &gen, int anul_ap) const {
+                           const std::string &gen, int anul_ap) const {
     const Domain c(titlu, autor, gen, anul_ap);
     Validator::valideaza(c);
     repo.adauga(c);
@@ -19,7 +20,7 @@ void Service::sterge_carte(const std::string &titlu) const {
 }
 
 void Service::modifica_carte(const std::string &titlu_vechi, const std::string &titlu_nou,
-                              const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) const {
+                             const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) const {
     Domain c_noua(titlu_nou, autor_nou, gen_nou, anul_ap_nou);
     Validator::valideaza(c_noua);
     repo.modifica(titlu_vechi, c_noua);
@@ -35,17 +36,17 @@ const std::vector<Domain> &Service::get_all() const {
 
 std::vector<Domain> Service::filtrare_titlu(const std::string &titlu) const {
     std::vector<Domain> rezultat;
-    const auto& carti = repo.get_all();
+    const auto &carti = repo.get_all();
     std::copy_if(carti.begin(), carti.end(), std::back_inserter(rezultat),
-        [&](const Domain& d) { return d.get_titlu() == titlu; });
+                 [&](const Domain &d) { return d.get_titlu() == titlu; });
     return rezultat;
 }
 
 std::vector<Domain> Service::filtrare_an(int anul_ap) const {
     std::vector<Domain> rezultat;
-    const auto& carti = repo.get_all();
+    const auto &carti = repo.get_all();
     std::copy_if(carti.begin(), carti.end(), std::back_inserter(rezultat),
-        [&](const Domain& d) { return d.get_anul_ap() == anul_ap; });
+                 [&](const Domain &d) { return d.get_anul_ap() == anul_ap; });
     return rezultat;
 }
 
@@ -86,12 +87,12 @@ void Service::goleste_cos() {
 }
 
 void Service::adauga_in_cos(const std::string &titlu) {
-    const Domain& c = repo.cauta(titlu);
+    const Domain &c = repo.cauta(titlu);
     cos.push_back(c);
 }
 
 void Service::genereaza_cos(int nr) {
-    const auto& carti = repo.get_all();
+    const auto &carti = repo.get_all();
     if (carti.empty())
         throw CosException("Nu exista carti in biblioteca pentru a genera cosul!");
 
@@ -103,7 +104,7 @@ void Service::genereaza_cos(int nr) {
         cos.push_back(sursa[static_cast<size_t>(i) % sursa.size()]);
 }
 
-const std::vector<Domain>& Service::get_cos() const {
+const std::vector<Domain> &Service::get_cos() const {
     return cos;
 }
 
@@ -113,9 +114,9 @@ void Service::exporta_cos(const std::string &nume_fisier, const std::string &for
         if (!f.is_open())
             throw CosException("Nu s-a putut deschide fisierul pentru scriere!");
         f << "Titlu,Autor,Gen,Anul aparitiei\n";
-        for (const auto& c : cos)
+        for (const auto &c: cos)
             f << c.get_titlu() << "," << c.get_autor() << ","
-              << c.get_gen() << "," << c.get_anul_ap() << "\n";
+                    << c.get_gen() << "," << c.get_anul_ap() << "\n";
     } else if (format == "HTML") {
         std::ofstream f(nume_fisier + ".html");
         if (!f.is_open())
@@ -123,11 +124,22 @@ void Service::exporta_cos(const std::string &nume_fisier, const std::string &for
         f << "<!DOCTYPE html>\n<html>\n<head><meta charset=\"UTF-8\"><title>Cos Inchirieri</title></head>\n<body>\n";
         f << "<h1>Cos de Inchirieri</h1>\n";
         f << "<table border=\"1\">\n<tr><th>Titlu</th><th>Autor</th><th>Gen</th><th>Anul aparitiei</th></tr>\n";
-        for (const auto& c : cos)
+        for (const auto &c: cos)
             f << "<tr><td>" << c.get_titlu() << "</td><td>" << c.get_autor()
-              << "</td><td>" << c.get_gen() << "</td><td>" << c.get_anul_ap() << "</td></tr>\n";
+                    << "</td><td>" << c.get_gen() << "</td><td>" << c.get_anul_ap() << "</td></tr>\n";
         f << "</table>\n</body>\n</html>\n";
     } else {
         throw CosException("Format invalid! Folositi CSV sau HTML.");
     }
+}
+
+std::map<string, int> Service::gen_frequences() {
+    std::vector<Domain> rezultat = repo.get_all();
+    std::map<string, int> freq;
+
+    for (const auto& x : rezultat) {
+        freq[x.get_gen()]++;
+    }
+
+    return freq;
 }

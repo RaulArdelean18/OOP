@@ -361,6 +361,38 @@ void test_cos_exporta_format_invalid() {
     assert(aruncat);
 }
 
+void test_gen_frequences() {
+    Repo repo;
+    Service srv{repo};
+
+    auto freq = srv.gen_frequences();
+    assert(freq.empty());
+
+    srv.adauga_carte("Morometii", "Preda", "roman", 1955);
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    srv.adauga_carte("Baltagul", "Sadoveanu", "traditional", 1930);
+    srv.adauga_carte("Enigma Otiliei", "Calinescu", "roman", 1938);
+    srv.adauga_carte("Plumb", "Bacovia", "poezie", 1916);
+
+    freq = srv.gen_frequences();
+    assert(freq.size() == 3);
+    assert(freq.at("roman") == 3);
+    assert(freq.at("traditional") == 1);
+    assert(freq.at("poezie") == 1);
+
+    srv.sterge_carte("Ion");
+    freq = srv.gen_frequences();
+    assert(freq.at("roman") == 2);
+    assert(freq.at("traditional") == 1);
+    assert(freq.at("poezie") == 1);
+
+    srv.modifica_carte("Plumb", "Plumb", "Bacovia", "roman", 1916);
+    freq = srv.gen_frequences();
+    assert(freq.at("roman") == 3);
+    assert(freq.at("traditional") == 1);
+    assert(freq.find("poezie") == freq.end());
+}
+
 void ruleaza_toate_testele() {
     test_domain();
     test_domain_default_constructor();
@@ -390,6 +422,7 @@ void ruleaza_toate_testele() {
     test_cos_exporta_csv();
     test_cos_exporta_html();
     test_cos_exporta_format_invalid();
+    test_gen_frequences();
 
     std::cout << "Toate testele au trecut cu succes!\n";
 }
