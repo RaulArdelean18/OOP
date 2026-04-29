@@ -1,11 +1,20 @@
 #include "repo/repo.h"
 #include "serv/service.h"
 #include "ui/ui.h"
+#include <iostream>
 
 int main() {
-    Repo repo;
-    Service srv(repo);
-    UI ui(srv);
-    ui.run();
-    return 0;
+    int opt;
+    std::cout << "Repo (1=Vector, 2=Map): ";
+    std::cin >> opt;
+
+    if (opt == 1) {
+        Repo repo;
+        Service srv(repo);
+        UI(srv).run();
+    } else {
+        RepoMap repo;
+        Service srv(repo);
+        UI(srv).run();
+    }
 }

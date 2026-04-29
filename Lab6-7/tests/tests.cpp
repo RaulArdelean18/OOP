@@ -393,6 +393,152 @@ void test_gen_frequences() {
     assert(freq.find("poezie") == freq.end());
 }
 
+void test_undo_adauga() {
+    // Dupa adaugare, undo trebuie sa stearga cartea
+    Repo repo;
+    Service srv(repo);
+
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    assert(srv.get_all().size() == 1);
+
+    srv.undo();
+    assert(srv.get_all().empty());
+}
+
+void test_undo_sterge() {
+    // Dupa stergere, undo trebuie sa readauge cartea
+    Repo repo;
+    Service srv(repo);
+
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    srv.sterge_carte("Ion");
+    assert(srv.get_all().empty());
+
+    srv.undo();
+    assert(srv.get_all().size() == 1);
+    assert(srv.cauta_carte("Ion").get_autor() == "Rebreanu");
+}
+
+void test_undo_modifica() {
+    // Dupa modificare, undo trebuie sa restaureze cartea originala
+    Repo repo;
+    Service srv(repo);
+
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    srv.modifica_carte("Ion", "Ion Modificat", "Autor Nou", "drama", 2000);
+    assert(srv.cauta_carte("Ion Modificat").get_autor() == "Autor Nou");
+
+    srv.undo();
+    // Titlul original trebuie restaurat
+    assert(srv.cauta_carte("Ion").get_autor() == "Rebreanu");
+    assert(srv.cauta_carte("Ion").get_gen() == "roman");
+    assert(srv.cauta_carte("Ion").get_anul_ap() == 1920);
+
+    // Titlul modificat nu mai exista
+    bool aruncat = false;
+    try { srv.cauta_carte("Ion Modificat"); }
+    catch (const NotFoundException&) { aruncat = true; }
+    assert(aruncat);
+}
+
+void test_undo_multiplu() {
+    // Undo in lant: adauga A, adauga B, sterge A -> undo x3 -> repo gol
+    Repo repo;
+    Service srv(repo);
+
+    srv.adauga_carte("A", "Autor1", "gen1", 2001);
+    srv.adauga_carte("B", "Autor2", "gen2", 2002);
+    srv.sterge_carte("A");
+    assert(srv.get_all().size() == 1);
+
+    // Undo stergere -> A revine
+    srv.undo();
+    assert(srv.get_all().size() == 2);
+
+    // Undo adaugare B -> B dispare
+    srv.undo();
+    assert(srv.get_all().size() == 1);
+    assert(srv.cauta_carte("A").get_autor() == "Autor1");
+
+    // Undo adaugare A -> repo gol
+    srv.undo();
+    assert(srv.get_all().empty());
+}
+
+void test_undo_lista_goala() {
+    // Undo fara operatii anterioare trebuie sa arunce exceptie
+    Repo repo;
+    Service srv(repo);
+
+    bool aruncat = false;
+    try { srv.undo(); }
+    catch (const std::runtime_error&) { aruncat = true; }
+    assert(aruncat);
+
+    // Dupa ce epuizam toate undo-urile, urmatorul trebuie sa arunce din nou
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    srv.undo(); // consuma singurul undo
+    aruncat = false;
+    try { srv.undo(); }
+    catch (const std::runtime_error&) { aruncat = true; }
+    assert(aruncat);
+}
+
+// ===== TESTE ITERATIA 2: SALVARE/INCARCARE FISIER =====
+
+void test_salveaza_si_incarca_fisier() {
+    // Salvam cateva carti, le incarcam intr-un repo nou si verificam
+    Repo repo;
+    Service srv(repo);
+    srv.adauga_carte("Ion", "Rebreanu", "roman", 1920);
+    srv.adauga_carte("Baltagul", "Sadoveanu", "roman", 1930);
+    srv.adauga_carte("Morometii", "Preda", "epic", 1955);
+
+    srv.salveaza_fisier("test_biblioteca.csv");
+
+    Repo repo2;
+    Service srv2(repo2);
+    srv2.incarca_fisier("test_biblioteca.csv");
+
+    assert(srv2.get_all().size() == 3);
+    assert(srv2.cauta_carte("Ion").get_autor() == "Rebreanu");
+    assert(srv2.cauta_carte("Baltagul").get_anul_ap() == 1930);
+    assert(srv2.cauta_carte("Morometii").get_gen() == "epic");
+
+    std::remove("test_biblioteca.csv");
+}
+
+void test_incarca_fisier_inexistent() {
+    // Incarcarea unui fisier care nu exista trebuie sa arunce exceptie
+    Repo repo;
+    Service srv(repo);
+
+    bool aruncat = false;
+    try { srv.incarca_fisier("fisier_care_nu_exista_niciodata.csv"); }
+    catch (const std::runtime_error&) { aruncat = true; }
+    assert(aruncat);
+}
+
+void test_salveaza_fisier_continut() {
+    // Verificam ca fisierul CSV contine liniile corecte
+    Repo repo;
+    Service srv(repo);
+    srv.adauga_carte("Zmeura de Padure", "Voiculescu", "poezie", 1903);
+
+    srv.salveaza_fisier("test_continut.csv");
+
+    std::ifstream f("test_continut.csv");
+    assert(f.is_open());
+    std::string linie;
+    std::getline(f, linie);
+    assert(linie.find("Zmeura de Padure") != std::string::npos);
+    assert(linie.find("Voiculescu") != std::string::npos);
+    assert(linie.find("poezie") != std::string::npos);
+    assert(linie.find("1903") != std::string::npos);
+    f.close();
+    std::remove("test_continut.csv");
+}
+
 void ruleaza_toate_testele() {
     test_domain();
     test_domain_default_constructor();
@@ -423,6 +569,15 @@ void ruleaza_toate_testele() {
     test_cos_exporta_html();
     test_cos_exporta_format_invalid();
     test_gen_frequences();
+
+    test_undo_adauga();
+    test_undo_sterge();
+    test_undo_modifica();
+    test_undo_multiplu();
+    test_undo_lista_goala();
+    test_salveaza_si_incarca_fisier();
+    test_incarca_fisier_inexistent();
+    test_salveaza_fisier_continut();
 
     std::cout << "Toate testele au trecut cu succes!\n";
 }

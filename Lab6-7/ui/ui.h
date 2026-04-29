@@ -32,6 +32,10 @@ private:
     void ui_afiseaza_cos() const;
     void ui_afiseaza_freq_gen() const;
 
+    void ui_undo();
+    void ui_salveaza_fisier() const;
+    void ui_incarca_fisier();
+
     static void afiseaza_map(const std::map<std::string,int>& freq);
     static void afiseaza_carte(const Domain& c);
     static void afiseaza_lista(const std::vector<Domain>& lista);

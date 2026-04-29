@@ -31,6 +31,15 @@ void test_cos_exporta_html();
 void test_cos_exporta_format_invalid();
 void test_gen_frequences();
 
+void test_undo_adauga();
+void test_undo_sterge();
+void test_undo_modifica();
+void test_undo_multiplu();
+void test_undo_lista_goala();
+void test_salveaza_si_incarca_fisier();
+void test_incarca_fisier_inexistent();
+void test_salveaza_fisier_continut();
+
 void ruleaza_toate_testele();
 
 #endif //LAB6_7_TESTS_H

@@ -12,6 +12,7 @@ add_executable(Lab6_7
         validator/validator.cpp
         validator/validator.h
         exceptions/exceptions.h
+        Undo/undo.h
 )
 
 add_executable(Lab6_7_tests

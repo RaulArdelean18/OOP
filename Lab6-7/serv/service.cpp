@@ -1,38 +1,60 @@
 #include "service.h"
 #include "../validator/validator.h"
+#include "../exceptions/exceptions.h"
 #include <algorithm>
 #include <random>
 #include <chrono>
 #include <fstream>
+#include <sstream>
+#include <stdexcept>
 
-Service::Service(Repo &repo_ref) : repo(repo_ref) {
-}
+Service::Service(AbstractRepo &repo_ref) : repo(repo_ref) {}
 
 void Service::adauga_carte(const std::string &titlu, const std::string &autor,
-                           const std::string &gen, int anul_ap) const {
+                           const std::string &gen, int anul_ap) {
     const Domain c(titlu, autor, gen, anul_ap);
     Validator::valideaza(c);
     repo.adauga(c);
+    istoricUndo.push_back(std::make_unique<UndoAdauga>(repo, c));
 }
 
-void Service::sterge_carte(const std::string &titlu) const {
+void Service::sterge_carte(const std::string &titlu) {
+    const Domain &carte_de_sters = repo.cauta(titlu);
+    Domain copie = carte_de_sters;
     repo.sterge(titlu);
+    istoricUndo.push_back(std::make_unique<UndoSterge>(repo, copie));
 }
 
 void Service::modifica_carte(const std::string &titlu_vechi, const std::string &titlu_nou,
-                             const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) const {
+                             const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) {
+    const Domain &carte_originala = repo.cauta(titlu_vechi);
+    Domain copie_originala = carte_originala;
+
     Domain c_noua(titlu_nou, autor_nou, gen_nou, anul_ap_nou);
     Validator::valideaza(c_noua);
     repo.modifica(titlu_vechi, c_noua);
+
+    istoricUndo.push_back(std::make_unique<UndoModifica>(repo, titlu_nou, copie_originala));
 }
 
 const Domain &Service::cauta_carte(const std::string &titlu) const {
     return repo.cauta(titlu);
 }
 
-const std::vector<Domain> &Service::get_all() const {
+std::vector<Domain> Service::get_all() const {
     return repo.get_all();
 }
+
+// ===== Undo =====
+
+void Service::undo() {
+    if (istoricUndo.empty()) {
+        throw std::runtime_error("Nu exista operatii de anulat!");
+    }
+    istoricUndo.back()->doUndo();
+    istoricUndo.pop_back();
+}
+
 
 std::vector<Domain> Service::filtrare_titlu(const std::string &titlu) const {
     std::vector<Domain> rezultat;
@@ -133,13 +155,53 @@ void Service::exporta_cos(const std::string &nume_fisier, const std::string &for
     }
 }
 
-std::map<string, int> Service::gen_frequences() {
+std::map<std::string, int> Service::gen_frequences() const {
     std::vector<Domain> rezultat = repo.get_all();
-    std::map<string, int> freq;
-
+    std::map<std::string, int> freq;
     for (const auto& x : rezultat) {
         freq[x.get_gen()]++;
     }
-
     return freq;
+}
+
+void Service::salveaza_fisier(const std::string &cale) const {
+    std::ofstream f(cale);
+    if (!f.is_open())
+        throw std::runtime_error("Nu s-a putut deschide fisierul pentru scriere: " + cale);
+    for (const auto &c : repo.get_all()) {
+        f << c.get_titlu() << ","
+          << c.get_autor() << ","
+          << c.get_gen() << ","
+          << c.get_anul_ap() << "\n";
+    }
+}
+
+void Service::incarca_fisier(const std::string &cale) {
+    std::ifstream f(cale);
+    if (!f.is_open())
+        throw std::runtime_error("Nu s-a putut deschide fisierul pentru citire: " + cale);
+
+    // Stergem istoricul undo la incarcare
+    istoricUndo.clear();
+
+    std::string linie;
+    while (std::getline(f, linie)) {
+        if (linie.empty()) continue;
+        std::istringstream ss(linie);
+        std::string titlu, autor, gen, an_str;
+        if (!std::getline(ss, titlu, ',')) continue;
+        if (!std::getline(ss, autor, ',')) continue;
+        if (!std::getline(ss, gen, ',')) continue;
+        if (!std::getline(ss, an_str)) continue;
+        if (!an_str.empty() && an_str.back() == '\r')
+            an_str.pop_back();
+        try {
+            int an = std::stoi(an_str);
+            Domain c(titlu, autor, gen, an);
+            Validator::valideaza(c);
+            repo.adauga(c);
+        } catch (...) {
+            // Sarim randurile invalide
+        }
+    }
 }

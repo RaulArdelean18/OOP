@@ -6,128 +6,65 @@
 #define LAB6_7_SERVICE_H
 
 #include "../repo/repo.h"
+#include "../undo/undo.h"
 #include "../utils/vector.h"
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 using namespace std;
 
 class Service {
 private:
-    Repo &repo;
+    AbstractRepo &repo;
     std::vector<Domain> cos;
 
+    // Lista de actiuni undo
+    std::vector<std::unique_ptr<ActiuneUndo>> istoricUndo;
+
 public:
-    Service(Repo &repo_ref);
+    explicit Service(AbstractRepo &repo_ref);
 
-    /**
-     * Comparam titlul intre 2 carti
-     * @param c1: prima carte
-     * @param c2: a doua carte
-     * @return
-     */
+    // ===== Comparatoare =====
     static bool cmp_titlu(const Domain &c1, const Domain &c2);
-
-    /**
-     * Comparam autorul intre 2 carti
-     * @param c1: prima carte
-     * @param c2: a doua carte
-     * @return
-     */
     static bool cmp_autor(const Domain &c1, const Domain &c2);
-
-    /**
-     * Comparam an gen intre 2 carti
-     * @param c1: prima carte
-     * @param c2: a doua carte
-     * @return
-     */
     static bool cmp_an_gen(const Domain &c1, const Domain &c2);
 
-    /**
-     * Adaugam cartea
-     * @param titlu string, titlul cartii
-     * @param autor string, autorul cartii
-     * @param gen string, genul carti
-     * @param anul_ap int, anul aparitie
-     */
+    // ===== CRUD =====
     void adauga_carte(const std::string &titlu, const std::string &autor,
-                      const std::string &gen, int anul_ap) const;
+                      const std::string &gen, int anul_ap);
 
-    /**
-     * Stergem cartea cu titlul @titlu
-     * @param titlu: string, titlul carti
-     */
-    void sterge_carte(const string &titlu) const;
+    void sterge_carte(const string &titlu);
 
-    /**
-     * Modifica cartea
-     * @param titlu_vechi : string, titlul vechi
-     * @param titlu_nou : string, titlul nou
-     * @param autor_nou : string, noul autor
-     * @param gen_nou : string, noul gen
-     * @param anul_ap_nou : int, anul de aparitie nou
-     */
     void modifica_carte(const std::string &titlu_vechi, const std::string &titlu_nou,
-                        const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou) const;
+                        const std::string &autor_nou, const std::string &gen_nou, int anul_ap_nou);
 
-    /**
-     * Cautam cartea
-     * @param titlu : string, titlul carti
-     * @return obiectul carte
-     */
     const Domain &cauta_carte(const string &titlu) const;
+    std::vector<Domain> get_all() const;
 
-    /**
-     * Get all
-     * @return vector de carti cu toate cartile
-     */
-    const std::vector<Domain> &get_all() const;
-
-    /**
-     * Filtrare dupa titlu
-     * @param titlu : string, titlul dupa care vrem sa filtrem
-     * @return vector de obiecte de carti
-     */
+    // ===== Filtrare & Sortare =====
     std::vector<Domain> filtrare_titlu(const string &titlu) const;
-
-    /**
-     * Filtrare dupa an
-     * @param anul_ap : int, anul aparitiei dupa care vrem sa filtrem
-     * @return vector de obiecte de carti
-     */
     std::vector<Domain> filtrare_an(int anul_ap) const;
-
-    /**
-     * Sortare titlu
-     * @return vector de obiecte de carti
-     */
     std::vector<Domain> sortare_titlu() const;
-
-    /**
-     * Sortare dupa autor
-     * @return vector de obiecte de carti
-     */
-
     std::vector<Domain> sortare_autor() const;
-
-    /**
-     * Sortare an aparitie, dupa cu genul
-     * @return vector de obiecte de carti
-     */
     std::vector<Domain> sortare_an_gen() const;
 
+    // ===== Cos =====
     void goleste_cos();
     void adauga_in_cos(const std::string &titlu);
     void genereaza_cos(int nr);
     const std::vector<Domain>& get_cos() const;
     void exporta_cos(const std::string &nume_fisier, const std::string &format) const;
 
-    /**
-     *  Aflu frecventa genurilor cartilor din Domain
-     *  @return map de string uri unde am frecventa genurilor de tip int
-     */
-    std::map<std::string, int> gen_frequences();
+    // ===== Frecvente genuri =====
+    std::map<std::string, int> gen_frequences() const;
+
+    // ===== Undo =====
+    void undo();
+
+    // ===== Salvare/Incarcare fisier repo =====
+    void salveaza_fisier(const std::string &cale) const;
+    void incarca_fisier(const std::string &cale);
 };
 
 #endif //LAB6_7_SERVICE_H

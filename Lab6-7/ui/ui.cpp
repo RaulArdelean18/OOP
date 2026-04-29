@@ -322,6 +322,42 @@ void UI::ui_afiseaza_freq_gen() const {
     }
 }
 
+void UI::ui_undo() {
+    try {
+        srv.undo();
+        std::cout << "Ultima operatie a fost anulata cu succes!\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << '\n';
+    }
+}
+
+void UI::ui_salveaza_fisier() const {
+    std::string cale;
+    std::cout << "Calea fisierului CSV (ex: biblioteca.csv): ";
+    std::cin >> std::ws;
+    std::getline(std::cin, cale);
+    try {
+        srv.salveaza_fisier(cale);
+        std::cout << "Biblioteca salvata cu succes in: " << cale << "\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << '\n';
+    }
+}
+
+void UI::ui_incarca_fisier() {
+    std::string cale;
+    std::cout << "Calea fisierului CSV de incarcat (ex: biblioteca.csv): ";
+    std::cin >> std::ws;
+    std::getline(std::cin, cale);
+    try {
+        srv.incarca_fisier(cale);
+        std::cout << "Biblioteca incarcata cu succes din: " << cale << "\n";
+        std::cout << "Total carti: " << srv.get_all().size() << "\n";
+    } catch (const std::exception &e) {
+        std::cout << e.what() << '\n';
+    }
+}
+
 void UI::run() {
     while (true) {
         print_meniu();
@@ -370,6 +406,12 @@ void UI::run() {
             case 15: ui_afiseaza_cos();
                 break;
             case 16: ui_afiseaza_freq_gen();
+                break;
+            case 17: ui_undo();
+                break;
+            case 18: ui_salveaza_fisier();
+                break;
+            case 19: ui_incarca_fisier();
                 break;
             case 0:
                 cout << "Aplicatia se inchide.\n";
